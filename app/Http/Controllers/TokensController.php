@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator as FacadesValidator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -51,6 +52,21 @@ class TokensController extends Controller
         }
     }
 
+    public function getAuthenticatedUser()
+    {
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                    return response()->json(['user_not_found'], 404);
+            }//Tymon\JWTAuth\Exceptions\TokenInvalidException
+            } catch ( TokenExpiredException $e) {
+                    return response()->json(['token_expired'], 401);
+            } catch (TokenInvalidException $e) {
+                    return response()->json(['token_invalid'], 401);
+            } catch (JWTException $e) {
+                    return response()->json(['token_absent'], 401);
+            }
+            return response()->json(compact('user'));
+    }
     public function refreshToken()
     {
 

@@ -15,16 +15,28 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/test', function(){
-	echo "Esto es una simple prueba!!";
-});
 
+/*inicio ruta para el login*/
 Route::post('/auth/login','TokensController@login');
-//auth
+Route::post('/horario','HorarioEstandarController@store');
+/*fin ruta para el login*/
 
-Route::group(['middleware'=>['jwt.aut'],'prefix'=>'v1'], function(){
 
-Route::post('/auth/refresh','TokensController@refreshToken');
-Route::get('/auth/expire','TokensController@expireToken');
 
+
+/*inicio de rutas que solicitan autentificación para seguir con el request*/
+
+Route::group(['middleware'=>['jwt.verify'],'prefix'=>'v1'], function(){
+
+			Route::post('/auth/refresh','TokensController@refreshToken');
+			Route::get('/auth/logout','TokensController@logout');
+			Route::get('/test', function(){
+				echo "Esto es una simple prueba!!";
+			});
 });
+
+/*
+
+Fin de rutas que solicitan autentificación para seguir con el request
+
+*/
